@@ -1,40 +1,50 @@
 package com.ordermanagement.OrderManagementAndAuthServer.service;
 
-import com.ordermanagement.OrderManagementAndAuthServer.dto.UserStatus;
+import com.ordermanagement.OrderManagementAndAuthServer.dto.Permission;
+import com.ordermanagement.OrderManagementAndAuthServer.dto.UserRole;
 import com.ordermanagement.OrderManagementAndAuthServer.model.User;
 import com.ordermanagement.OrderManagementAndAuthServer.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;  // ✅ Spring Security ka
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class UserDetailServiceImpl implements UserDetailsService{
-
+public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepo repo;
-    @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
-        User user=repo.findByUserName(username)
-                .orElseThrow(()->new UsernameNotFoundException("User Not Found: "+username));
 
-        // Status check
-        if (user.getStatus() != UserStatus.ACTIVE) {
-            throw new DisabledException("User account is INACTIVE");
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = repo.findByUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found: " + username));
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        // LOOP THROUGH ROLES
+        for (UserRole role : user.getRoles()) {
+
+            // ROLE_ADMIN / ROLE_USER
+            authorities.add(
+                    new SimpleGrantedAuthority("ROLE_" + role.name())
+            );
+
+            // permissions of each role
+            for (Permission permission : role.getPermissions()) {
+                authorities.add(
+                        new SimpleGrantedAuthority(permission.name())
+                );
+            }
         }
 
-        // Convert enum roles to authorities
-        List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_ADMIN" + role.name()))
-                .collect(Collectors.toList());
 
+        // Return Spring Security User with roles
         return new org.springframework.security.core.userdetails.User(
                 user.getUserName(),
                 user.getPassword(),
@@ -42,3 +52,4 @@ public class UserDetailServiceImpl implements UserDetailsService{
         );
     }
 }
+

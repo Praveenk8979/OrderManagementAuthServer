@@ -4,9 +4,11 @@ import com.ordermanagement.OrderManagementAndAuthServer.keys.JwtKeys;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 
 import static java.security.KeyRep.Type.SECRET;
@@ -30,7 +32,7 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + exp))
-                .signWith(SignatureAlgorithm.HS256, keys.getSecret())
+                .signWith(keys.getSecretKey())
                 .compact();
     }
 
@@ -43,7 +45,10 @@ public class JwtUtil {
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parser().setSigningKey(keys.getSecret())
-                .parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(keys.getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

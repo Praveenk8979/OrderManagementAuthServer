@@ -1,6 +1,5 @@
 package com.ordermanagement.OrderManagementAndAuthServer.security;
 
-import com.ordermanagement.OrderManagementAndAuthServer.service.UserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -40,21 +40,36 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = req.getServletPath();
+
+        // LOGIN & REGISTER pe JWT filter NAHI chalega
+        if (path.startsWith("/auth/")) {
+            filterChain.doFilter(req, res);
+            return;
+        }
+
         String authHeader=req.getHeader("Authorization");
         String refreshToken=req.getHeader("Refresh-Token");
 
         if(authHeader !=null && authHeader.startsWith("Bearer ")){
             String accessToken=authHeader.substring(7);
 
-            if(!jwtUtil.isExpired(accessToken)){
-                authenticate(accessToken, req);
-            }else if (refreshToken != null && !jwtUtil.isExpired(refreshToken)) {
-                String username = jwtUtil.extractUsername(refreshToken);
-                String newAccessToken = jwtUtil.generateAccessToken(username);
-                res.setHeader("New-Access-Token", newAccessToken);
-                authenticate(newAccessToken, req);
+            try {
+                if (!jwtUtil.isExpired(accessToken)) {
+                    authenticate(accessToken, req);
+                } else if (refreshToken != null && !jwtUtil.isExpired(refreshToken)) {
+                    String username = jwtUtil.extractUsername(refreshToken);
+                    String newAccessToken = jwtUtil.generateAccessToken(username);
+                    res.setHeader("New-Access-Token", newAccessToken);
+                    authenticate(newAccessToken, req);
+                }
+            } catch (Exception e) {
+                // signature mismatch or token tampering
+                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
         }
+
         filterChain.doFilter(req, res);
         }
 

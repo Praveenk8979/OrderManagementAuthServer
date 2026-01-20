@@ -1,9 +1,13 @@
 package com.ordermanagement.OrderManagementAndAuthServer.model;
 
+import com.ordermanagement.OrderManagementAndAuthServer.dto.Permission;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -18,5 +22,6 @@ public class Role {
 
     @Column(name = "roleName")
     private String roleName;
+
 
 }

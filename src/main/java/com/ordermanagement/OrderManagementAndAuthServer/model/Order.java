@@ -31,6 +31,16 @@ public class Order {
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     private List<OrderItem> items;
 
-    private LocalDateTime createdAt=LocalDateTime.now();
+    private LocalDateTime createdAt;
+
+    private LocalDateTime paidAt;
+
+    private LocalDateTime deliveredAt;
+    private LocalDateTime cancelAt;
+
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
 }

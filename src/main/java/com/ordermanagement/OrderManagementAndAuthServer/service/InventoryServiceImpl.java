@@ -5,6 +5,7 @@ import com.ordermanagement.OrderManagementAndAuthServer.model.Inventory;
 import com.ordermanagement.OrderManagementAndAuthServer.repo.InventoryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public void deleteProduct(Long productId) {
-        if(!repo.existsById(productId)){
+        if (!repo.existsById(productId)) {
             throw new RuntimeException("Product not found!..");
         }
         repo.deleteById(productId);
@@ -61,18 +62,32 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public Inventory getProductById(Long id) {
         return repo.findById(id)
-                .orElseThrow(()->new RuntimeException("Product Not Found"));
+                .orElseThrow(() -> new RuntimeException("Product Not Found"));
     }
 
     //update stock (order/cancel)
+    @Transactional
     @Override
     public Inventory updateStock(Long productId, Integer quantityChange) {
-        Inventory product=getProductById(productId);
-        int updateStock=product.getAvailableStock()+quantityChange;
-        if(updateStock<0){
-            throw new RuntimeException("Insufficient stock for productId :"+productId);
+//        Inventory product=getProductById(productId);
+//        int updateStock=product.getAvailableStock()+quantityChange;
+//        if(updateStock<0){
+//            throw new RuntimeException("Insufficient stock for productId :"+productId);
+//        }
+//        product.setAvailableStock(updateStock);
+//        return repo.save(product);
+
+        Inventory inventory = repo.findById(productId).orElseThrow(
+                () -> new RuntimeException("Product not found!.")
+        );
+        int upadteStock = inventory.getAvailableStock() + quantityChange;
+
+        if (upadteStock < 0) {
+            throw new RuntimeException("Insufficient Stock!.");
         }
-        product.setAvailableStock(updateStock);
-        return repo.save(product);
+        inventory.setAvailableStock(upadteStock);
+        return repo.save(inventory);
     }
+
+
 }

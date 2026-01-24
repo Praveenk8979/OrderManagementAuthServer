@@ -34,4 +34,14 @@ public class UserController {
         user.setUserName(updated.getUserName());
         return repo.save(user);
     }
+
+//    @PutMapping("/user/password")
+//    @PreAuthorize("hasAuthority('USER_UPDATE')")
+//    public String updatePassword(@RequestBody PasswordChangeDto dto, Authentication auth){
+//        User user = repo.findByUserName(auth.getName()).orElseThrow();
+//        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+//        repo.save(user);
+//        return "Password updated successfully";
+//    }
+
 }

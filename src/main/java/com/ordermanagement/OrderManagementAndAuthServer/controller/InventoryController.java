@@ -15,24 +15,28 @@ public class InventoryController {
     @Autowired
     private InventoryService inventoryService;
 
+    //admin :- create product
     @PreAuthorize("hasAuthority('PRODUCT_CREATE')")
     @PostMapping
     public Inventory createProduct(@RequestBody Inventory inventory){
         return  inventoryService.createProduct(inventory);
     }
 
+    //user+admin :- view all products
     @PreAuthorize("hasAuthority('PRODUCT_READ')")
     @GetMapping
     public List<Inventory> getAllProducts() {
         return inventoryService.getAllProducts();
     }
 
+    //user+admin :- view  products id
     @PreAuthorize("hasAuthority('PRODUCT_READ')")
     @GetMapping("/{id}")
     public Inventory getProduct(@PathVariable Long id) {
         return inventoryService.getProductById(id);
     }
 
+    //admin:- update product
     @PreAuthorize("hasAuthority('PRODUCT_UPDATE')")
     @PutMapping("/{id}")
     public Inventory updateProduct(
@@ -41,6 +45,9 @@ public class InventoryController {
         return inventoryService.updateProduct(id, inventory);
     }
 
+
+
+    //admin:- delete product
     @PreAuthorize("hasAuthority('PRODUCT_DELETE')")
     @DeleteMapping("/{id}")
     public String deleteProduct(@PathVariable Long id) {

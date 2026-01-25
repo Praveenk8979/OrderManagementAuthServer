@@ -20,8 +20,23 @@ public enum Role {
             Permission.PRODUCT_CREATE,
             Permission.PRODUCT_UPDATE,
             Permission.PRODUCT_DELETE,
-            Permission.PRODUCT_READ
+            Permission.PRODUCT_READ,
 
+            // cart
+            Permission.CART_READ_ALL,
+            Permission.CART_UPDATE,
+
+            // wishlist
+            Permission.WISHLIST_MANAGE_ALL,
+
+            // address
+            Permission.ADDRESS_READ_ALL,
+
+            // review
+            Permission.REVIEW_MANAGE_ALL,
+
+            // notification
+            Permission.NOTIFICATION_SEND
             )),
 
     USER(Set.of(
@@ -35,7 +50,20 @@ public enum Role {
             Permission.ORDER_READ_SELF,
 
             //Inventory view only
-            Permission.PRODUCT_READ
+            Permission.PRODUCT_READ,
+
+            // cart
+            Permission.CART_READ,
+            Permission.CART_UPDATE,
+
+            // wishlist
+            Permission.WISHLIST_MANAGE,
+
+            // review
+            Permission.REVIEW_MANAGE,
+
+            // notification
+            Permission.NOTIFICATION_READ
     ));
 
     private final Set<Permission> permissions;

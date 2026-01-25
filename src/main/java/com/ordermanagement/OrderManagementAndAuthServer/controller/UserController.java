@@ -35,7 +35,7 @@ public class UserController {
         return repo.save(user);
     }
 
-//    @PutMapping("/user/password")
+//    @PutMapping("/change/password")
 //    @PreAuthorize("hasAuthority('USER_UPDATE')")
 //    public String updatePassword(@RequestBody PasswordChangeDto dto, Authentication auth){
 //        User user = repo.findByUserName(auth.getName()).orElseThrow();

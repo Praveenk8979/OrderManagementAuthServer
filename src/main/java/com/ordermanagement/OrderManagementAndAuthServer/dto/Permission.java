@@ -18,5 +18,25 @@ public enum Permission {
     PRODUCT_CREATE,
     PRODUCT_UPDATE,
     PRODUCT_DELETE,
-    PRODUCT_READ
+    PRODUCT_READ,
+
+    //Cart permission
+    CART_READ,
+    CART_UPDATE,
+    CART_READ_ALL,
+
+    // wishlist permission
+    WISHLIST_MANAGE,
+    WISHLIST_MANAGE_ALL,
+
+    // address permission
+    ADDRESS_READ_ALL,
+
+    // review permission
+    REVIEW_MANAGE,
+    REVIEW_MANAGE_ALL,
+
+    // notification permission
+    NOTIFICATION_READ,
+    NOTIFICATION_SEND
 }

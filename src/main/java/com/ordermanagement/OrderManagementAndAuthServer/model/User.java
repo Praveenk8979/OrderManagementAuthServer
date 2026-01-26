@@ -28,7 +28,6 @@ public class User {
 
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Set<UserRole> roles;
 
     // Status as Enum

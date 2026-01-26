@@ -26,6 +26,9 @@ public class AuthServiceImpl implements  AuthService{
     private JwtUtil jwtUtil;
 
     @Autowired
+    private EmaiService emaiService;
+
+    @Autowired
     private PasswordEncoder encoder;
 
     @Override
@@ -62,10 +65,24 @@ public class AuthServiceImpl implements  AuthService{
 
         // Set status
         user.setStatus(UserStatus.ACTIVE);
+        user.setEmail(dto.getEmail());
 
         repo.save(user);
 
         return "User registered successfully";
     }
+
+    @Override
+    public void changePassword(User user, String newPassword) {
+        //  update password
+        user.setPassword(encoder.encode(newPassword));
+        repo.save(user);
+
+        // async email (non-blocking)
+        emaiService.sendPasswordChangeAlert(
+                user.getEmail(),
+                user.getUserName()
+        );
     }
+}
 

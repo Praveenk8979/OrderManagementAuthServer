@@ -1,5 +1,6 @@
 package com.ordermanagement.OrderManagementAndAuthServer.controller;
 
+import com.ordermanagement.OrderManagementAndAuthServer.dto.ApiResponse;
 import com.ordermanagement.OrderManagementAndAuthServer.model.Order;
 import com.ordermanagement.OrderManagementAndAuthServer.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,26 @@ public class AdminOrderController {
 
     @PreAuthorize("hasAuthority('ORDER_UPDATE')")
     @PutMapping("/{id}/paid")
-    public Order markPaid(@PathVariable Long id) {
-        return service.markOrderPaid(id);
-    }
+    public ApiResponse<Order> markPaid(@PathVariable Long id) {
 
+        Order order = service.markOrderPaid(id);
+
+        return new ApiResponse<>(
+                true,
+                "Order marked as PAID. Payment email sent to user.",
+                order
+        );
+    }
     @PreAuthorize("hasAuthority('ORDER_UPDATE')")
     @PutMapping("/{id}/delivered")
-    public Order markDelivered(@PathVariable Long id) {
-        return service.markOrderDelivered(id);
+    public ApiResponse<Order> markDelivered(@PathVariable Long id) {
+
+        Order order = service.markOrderDelivered(id);
+
+        return new ApiResponse<>(
+                true,
+                "Order DELIVERED successfully. Delivery email sent to user.",
+                order
+        );
     }
 }
